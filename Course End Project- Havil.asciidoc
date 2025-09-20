@@ -1,0 +1,148 @@
++*In[6]:*+
+[source, ipython3]
+----
+import csv
+
+def set_budget():
+    budget = float(input("Enter your monthly budget: "))
+    return budget
+----
+
+
++*In[8]:*+
+[source, ipython3]
+----
+def save_expenses(expenses, filename='expenses.csv'):
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Date", "Category", "Amount", "Description"])
+        for expense in expenses:
+            writer.writerow([expense['date'], expense['category'], expense['amount'], expense['description']])
+    print("Expenses saved successfully.")
+
+----
+
+
++*In[10]:*+
+[source, ipython3]
+----
+def load_expenses(filename='expenses.csv'):
+    expenses = []
+    try:
+        with open(filename, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                expenses.append({
+                    'date': row['Date'],
+                    'category': row['Category'],
+                    'amount': float(row['Amount']),
+                    'description': row['Description']
+                })
+    except FileNotFoundError:
+        print("No previous expenses found... Starting fresh.")
+    return expenses
+
+----
+
+
++*In[12]:*+
+[source, ipython3]
+----
+def add_expense(expenses):
+    date = input("Enter the date (YYYY-MM-DD): ")
+    category = input("Enter the category (Food, Transport, etc.): ")
+    amount = float(input("Enter the amount: "))
+    description = input("Enter a short description: ")
+
+    expense = {
+        'date': date,
+        'category': category,
+        'amount': amount,
+        'description': description
+    }
+    expenses.append(expense)
+    print("Expense added successfully!")
+
+----
+
+
++*In[13]:*+
+[source, ipython3]
+----
+def view_expenses(expenses):
+    if not expenses:
+        print("No expenses recorded yet.")
+        return
+
+    print("\n--- All Expenses ---")
+    for i, expense in enumerate(expenses, start=1):
+        print(f"{i}. {expense['date']} | {expense['category']} | ${expense['amount']} | {expense['description']}")
+----
+
+
++*In[15]:*+
+[source, ipython3]
+----
+def track_budget(expenses, budget):
+    total_spent = sum(expense['amount'] for expense in expenses)
+    remaining = budget - total_spent
+
+    print("\n--- Budget Tracking ---")
+    print(f"Monthly Budget: ${budget}")
+    print(f"Total Spent:   ${total_spent}")
+    print(f"Remaining:     ${remaining}")
+
+    if total_spent > budget:
+        print("You have exceeded your budget!")
+    elif total_spent > 0.8 * budget:
+        print("Warning: You are close to exceeding your budget.")
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+def main():
+    expenses = load_expenses()
+    budget = set_budget()
+    
+    while True:
+        print("\n Personal Expense Tracker")
+        print("1. Add Expense")
+        print("2. View Expenses")
+        print("3. Track Budget")
+        print("4. Save Expenses")
+        print("5. Exit")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == '1':
+            add_expense(expenses)
+        elif choice == '2':
+            view_expenses(expenses)
+        elif choice == '3':
+            track_budget(expenses, budget)
+        elif choice == '4':
+            save_expenses(expenses)
+        elif choice == '5':
+            print("Exiting......")
+            break
+        else:
+            print("Invalid choice, please select a valid option.")
+
+if __name__ == "__main__":
+    main()
+----
+
+
++*Out[ ]:*+
+----
+No previous expenses found... Starting fresh.
+----
+
+
++*In[ ]:*+
+[source, ipython3]
+----
+
+----
